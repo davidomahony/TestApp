@@ -1,0 +1,8 @@
+{
+  "appId": "com.davetest.app",
+  "appName": "davetest",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build",
+  "cordova": {}
+}
