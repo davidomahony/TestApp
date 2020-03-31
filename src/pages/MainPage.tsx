@@ -32,10 +32,14 @@ import SelectStyle from './SelectStyle';
 import Home from './Home';
 import FileUpload from './FileUpload';
 import Finish from './Finish';
+import { image } from 'ionicons/icons';
 
 type State = {
     activePage: string,
-    applicationPages: string[]
+    applicationPages: string[],
+    selectedStyle: string,
+    selectedImages: string[],
+    imageViewPorts: string // not too sure what type yet
 }
 
 export class MainPage extends React.Component<{}, State> {
@@ -44,14 +48,26 @@ export class MainPage extends React.Component<{}, State> {
 
     this.state = {
       activePage: "Home",
-      applicationPages: ['Home', 'PhotoPicker', 'SelectStyle', 'Finish']
+      applicationPages: ['Home', 'FileUpload', 'SelectStyle', 'Finish'],
+      selectedStyle: 'StyleOne',
+      selectedImages: [],
+      imageViewPorts: 'dont no man'
     }
 }
 
+SelectedStyleUpdate = (newStyle: string) => {
+  this.setState({selectedStyle: newStyle})
+}
 
-UpdateActiveStyle(style: any)
+ImagesSelectedUpdate(newImages: string){
+  console.log("Call Back Success")
+  let newSelectedImages = [...this.state.selectedImages, newImages];
+  this.setState({selectedImages: newSelectedImages})
+}
+
+ImageViewportUpdate(style: any)
 {
-    this.setState({activePage: style})
+    //this.setState({activePage: style})
 }
 
 Navigate(goForward: boolean): void {
@@ -59,6 +75,22 @@ Navigate(goForward: boolean): void {
   var pageToNavigateTo = goForward? index + 1 : index - 1
   let page = this.state.applicationPages[pageToNavigateTo]
   this.setState({activePage: page});
+}
+
+ActivePageContent(currentState: string) {
+  if (this.state.activePage === 'Home'){
+    return <Home></Home>
+  }
+  else if (this.state.activePage === 'FileUpload') {
+    var functionForImageUpdated = this.ImagesSelectedUpdate.bind(this)
+    return <FileUpload selectedImages={this.state.selectedImages} selectedImagesUpdateAction={functionForImageUpdated}></FileUpload> 
+  }
+  else if (this.state.activePage === 'SelectStyle') {
+    return <SelectStyle selectedImages={this.state.selectedImages}></SelectStyle>
+  }
+  else if (this.state.activePage === 'Finish') {
+    return <Finish></Finish>
+  }
 }
 
  render() {
@@ -72,18 +104,14 @@ Navigate(goForward: boolean): void {
           </IonRow>
         </IonToolbar>
       </IonHeader>
+      <IonContent>
+        {
+          this.ActivePageContent(this.state.activePage)
+        }
+      </IonContent>
       <IonFooter>
         <IonButton expand="block" onClick={() => this.Navigate(true)}> Continue </IonButton>
       </IonFooter>
-      <IonContent>
-        {
-          this.state.activePage === 'Home' ?
-          <Home></Home> : this.state.activePage === 'PhotoPicker' ?
-           <FileUpload></FileUpload> : this.state.activePage === 'SelectStyle' ?
-           <SelectStyle availableStyle={['StyleOne', 'StyleTwo', 'StyleThree']}></SelectStyle> : this.state.activePage === 'Finish' ? 
-           <Finish></Finish> : "No page man"
-        }
-      </IonContent>
     </IonPage>
     )
  }

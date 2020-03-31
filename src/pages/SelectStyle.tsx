@@ -12,6 +12,7 @@ import {
   IonButton,
   IonButtons,
   IonCard,
+  IonImg,
   IonFooter,
   IonPage,
   IonCardContent,
@@ -23,22 +24,24 @@ import {
 
 import './Page.css';
 
-import StyleOne from "./../StyleOne.jpg";
-import StyleTwo from "./../StyleTwo.jpg";
-import StyleThree from "./../StyleThree.jpg";
+import StyleOne from "./../Photos/boldIcon.svg";
+import StyleTwo from "./../Photos/cleanIcon.svg";
+import StyleThree from "./../Photos/everIcon.svg";
+
+
 
 type State = {
-    activeStyle: 'StyleOne',
-    availableStyle: []
+    activeStyle: string,
+    selectedPhotos: string[]
 }
 
-export class SelectStyle extends React.Component<{availableStyle: any}, State> {
+export class SelectStyle extends React.Component<{selectedImages: string[]}, State>{
     constructor(props: any) {
       super(props);
   
       this.state = {
         activeStyle: 'StyleOne',
-        availableStyle: this.props.availableStyle
+        selectedPhotos: this.props.selectedImages
       }
   }
 
@@ -46,11 +49,23 @@ export class SelectStyle extends React.Component<{availableStyle: any}, State> {
     this.setState({activeStyle: style});
 }
 
+SelectedStylePicker (style: string){
+  if (style === "StyleOne"){
+    return StyleOne;
+  }
+  else if (style === "StyleTwo"){
+    return StyleTwo;
+  }
+  else if (style === "StyleThree"){
+    return StyleThree;
+  }
+}
+
   styleNames = ['StyleOne', 'StyleTwo', 'StyleThree']; 
   render() {
       return(
-          <IonContent>
-                    <IonSlides class="sliderCard">
+        <IonContent>
+          <IonSlides class="sliderCard">
         {this.styleNames.map(style => <IonSlide className="SliderCard">
           <button color="red" onClick={() => this.UpdateActiveStyle(style)}>
             <IonCard>
@@ -66,10 +81,16 @@ export class SelectStyle extends React.Component<{availableStyle: any}, State> {
       <IonText color="secondary">
           <h1 className="StyleText">{this.state.activeStyle}</h1>
       </IonText>
-        <img src={this.state.activeStyle === "StyleOne" ? 
-                StyleOne : this.state.activeStyle === "StyleTwo" ?
-                StyleTwo : StyleThree} alt="" ></img>
-          </IonContent>
+      <IonCard className="borderImage">
+        <IonCardContent>
+        <div className="div">
+          <img src={this.SelectedStylePicker(this.state.activeStyle)} className="first"/>
+          <IonImg  src={this.props.selectedImages[0]} className="second" ></IonImg>
+          {/* <img src={this.state.selectedPhotos[0]} className="second"/> */}
+        </div>
+        </IonCardContent>
+      </IonCard>
+      </IonContent>
       );
   }
 }

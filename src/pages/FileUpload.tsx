@@ -20,48 +20,37 @@ import './Page.css';
 import { Plugins, CameraResultType } from '@capacitor/core';
 const { Camera } = Plugins
 
-const State = {
-    photo: '',
-    selectedPhotos: ['','']
+type State = {
+    selectedPhotos: string[]
 }
 
 
 
-export class FileUpload extends React.Component{
-    state: any = {};
-    props: any = {};
+export class FileUpload extends React.Component<{selectedImages: string[], selectedImagesUpdateAction: (string: string) => void}, State>{
     constructor(props: any) {
       super(props);
-      this.state = { ...State };
-      //defineCustomElements(window)
+
+      this.state = {
+        selectedPhotos: this.props.selectedImages
+      }
     }
 
-  openScanner () {
-    const data = BarcodeScanner.scan();
-    console.log(`Barcode data recieved`);
-    };
-
-  async takePicture() {
-    const image = await Camera.getPhoto({
-    quality: 90,
-    allowEditing: false,
-    resultType: CameraResultType.Uri
-    });
-    var imageUrl = image.webPath;
-    // Can be set to the src of an image now
-    this.setState({
-    photo: imageUrl
-    })
+    handleChange = (event: any) => {
+      let test = URL.createObjectURL(event.target.files[0]);
+      this.props.selectedImagesUpdateAction(test);
     }
 
   render() {
       return(
           <IonContent>
             <h2> FileUpload </h2>
-            <IonImg style={{ 'border': '1px solid black', 'minHeight': '100px' }} src={this.state.photo} ></IonImg>
-            <IonFab color="primary" vertical="bottom" horizontal="center" slot="fixed">
-                <IonButton onClick={() => this.openScanner()}>Scan barcode</IonButton>
-            </IonFab>
+            <IonImg  src={this.props.selectedImages[0]} ></IonImg>
+            {/* <IonFab color="primary" vertical="bottom" horizontal="center" slot="fixed">
+                <IonButton onClick={this.fileSelectedHandler}>Scan barcode</IonButton>
+            </IonFab> */}
+            <div>
+              <input type="file" onChange={this.handleChange}/>
+            </div>
           </IonContent>
       );
   }
