@@ -115,3 +115,9 @@ ion-content ion-toolbar {
   max-height: 50%;
   max-width: 50%;
 }
+
+.cart{
+  height: 50px;
+
+  color: blue;
+}

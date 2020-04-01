@@ -1,22 +1,10 @@
 import React, { useState, FormEvent } from 'react';
 import './Page.css';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonButton,
-  IonButtons,
   IonCard,
   IonImg,
-  IonFooter,
-  IonPage,
   IonCardContent,
-  IonMenuButton,
   IonSlide,
   IonSlides,
   IonText
@@ -28,14 +16,17 @@ import StyleOne from "./../Photos/boldIcon.svg";
 import StyleTwo from "./../Photos/cleanIcon.svg";
 import StyleThree from "./../Photos/everIcon.svg";
 
-
+type SelectedImage = {
+  identifier: string,
+  selectImagePath: string
+}
 
 type State = {
     activeStyle: string,
-    selectedPhotos: string[]
+    selectedPhotos: SelectedImage[]
 }
 
-export class SelectStyle extends React.Component<{selectedImages: string[]}, State>{
+export class SelectStyle extends React.Component<{selectedImages: SelectedImage[]}, State>{
     constructor(props: any) {
       super(props);
   
@@ -62,6 +53,21 @@ SelectedStylePicker (style: string){
 }
 
   styleNames = ['StyleOne', 'StyleTwo', 'StyleThree']; 
+
+  createPreviewForSelectedPhotos (photos: SelectedImage[]){
+    let previews = photos.map(photo => 
+    <IonCard className="borderImage">
+      <IonCardContent>
+      <div className="div">
+        <img src={this.SelectedStylePicker(this.state.activeStyle)} className="first"/>
+        <IonImg  src={photo.selectImagePath} className="second" ></IonImg>
+      </div>
+      </IonCardContent>
+    </IonCard>
+    )
+    return previews
+  }
+
   render() {
       return(
         <IonContent>
@@ -80,16 +86,8 @@ SelectedStylePicker (style: string){
       </IonSlides>
       <IonText color="secondary">
           <h1 className="StyleText">{this.state.activeStyle}</h1>
-      </IonText>
-      <IonCard className="borderImage">
-        <IonCardContent>
-        <div className="div">
-          <img src={this.SelectedStylePicker(this.state.activeStyle)} className="first"/>
-          <IonImg  src={this.props.selectedImages[0]} className="second" ></IonImg>
-          {/* <img src={this.state.selectedPhotos[0]} className="second"/> */}
-        </div>
-        </IonCardContent>
-      </IonCard>
+      </IonText> 
+        {this.createPreviewForSelectedPhotos(this.props.selectedImages)}
       </IonContent>
       );
   }

@@ -10,23 +10,33 @@ import {
   IonButton,
   IonIcon,
   IonContent,
+  IonSlide,
+  IonSlides,
+  IonCardContent,
+  IonCard,
+  IonRow,
 } from "@ionic/react";
 
-import { defineCustomElements } from '@ionic/pwa-elements/loader';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { removeCircle } from 'ionicons/icons'
 
-import './Page.css';
+import './fileUpload.css';
 
 import { Plugins, CameraResultType } from '@capacitor/core';
 const { Camera } = Plugins
 
 type State = {
-    selectedPhotos: string[]
+    selectedPhotos: SelectedImage[]
 }
 
+type SelectedImage = {
+  identifier: string,
+  selectImagePath: string
+}
 
-
-export class FileUpload extends React.Component<{selectedImages: string[], selectedImagesUpdateAction: (string: string) => void}, State>{
+export class FileUpload extends React.Component<{
+  selectedImages: SelectedImage[],
+   selectedImageRemove: (identifier: string, path: string ) => void
+   selectedImagesUpdateAction: (identifier: string, path: string ) => void}, State>{
     constructor(props: any) {
       super(props);
 
@@ -35,21 +45,37 @@ export class FileUpload extends React.Component<{selectedImages: string[], selec
       }
     }
 
-    handleChange = (event: any) => {
+  handleChange = (event: any) => {
       let test = URL.createObjectURL(event.target.files[0]);
-      this.props.selectedImagesUpdateAction(test);
+      this.props.selectedImagesUpdateAction('0', test);
     }
+
+  handlerRemoveImage = (identifier: string, image: string) =>{
+    this.props.selectedImageRemove(identifier, image);
+  }
+
+  displaySelectedPhotos (files: SelectedImage []){
+    let returnedImages = files.map(file => 
+        <IonCard className="">
+        <IonCardContent>
+          <IonRow>
+            <IonImg className="importedImages" src={file.selectImagePath}></IonImg>
+            <button onClick={() => this.props.selectedImageRemove(file.identifier, file.selectImagePath)} className="hasIcon">
+              <IonIcon icon={removeCircle} className="removeIcon"></IonIcon>
+            </button>
+          </IonRow>
+        </IonCardContent>
+      </IonCard>
+    )
+    return returnedImages
+  }
 
   render() {
       return(
           <IonContent>
-            <h2> FileUpload </h2>
-            <IonImg  src={this.props.selectedImages[0]} ></IonImg>
-            {/* <IonFab color="primary" vertical="bottom" horizontal="center" slot="fixed">
-                <IonButton onClick={this.fileSelectedHandler}>Scan barcode</IonButton>
-            </IonFab> */}
+              {this.displaySelectedPhotos(this.props.selectedImages)}
             <div>
-              <input type="file" onChange={this.handleChange}/>
+              <input type="file" onChange={this.handleChange}></input>
             </div>
           </IonContent>
       );

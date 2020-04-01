@@ -25,21 +25,29 @@ import {
   IonSlide,
   IonSlides,
   IonText,
-  IonRow
+  IonRow,
+  IonIcon
 } from "@ionic/react";
 import { type } from 'os';
 import SelectStyle from './SelectStyle';
 import Home from './Home';
 import FileUpload from './FileUpload';
 import Finish from './Finish';
-import { image } from 'ionicons/icons';
+
+import { cartOutline, arrowBack } from 'ionicons/icons'
+
+type SelectedImage = {
+  identifier: string,
+  selectImagePath: string
+}
 
 type State = {
     activePage: string,
     applicationPages: string[],
     selectedStyle: string,
-    selectedImages: string[],
-    imageViewPorts: string // not too sure what type yet
+    selectedImages: SelectedImage[],
+    imageViewPorts: string // not too sure what type yet,
+    numberOfImages: number
 }
 
 export class MainPage extends React.Component<{}, State> {
@@ -51,7 +59,8 @@ export class MainPage extends React.Component<{}, State> {
       applicationPages: ['Home', 'FileUpload', 'SelectStyle', 'Finish'],
       selectedStyle: 'StyleOne',
       selectedImages: [],
-      imageViewPorts: 'dont no man'
+      imageViewPorts: 'dont no man',
+      numberOfImages: 0
     }
 }
 
@@ -59,9 +68,17 @@ SelectedStyleUpdate = (newStyle: string) => {
   this.setState({selectedStyle: newStyle})
 }
 
-ImagesSelectedUpdate(newImages: string){
-  console.log("Call Back Success")
-  let newSelectedImages = [...this.state.selectedImages, newImages];
+ImagesSelectedUpdate(identifier: string, newImage: string){
+  let count = this.state.numberOfImages;
+  let newSelectedImages = this.state.selectedImages;
+  count++;
+  this.setState({numberOfImages: count})
+  newSelectedImages.push({identifier: `${count}`, selectImagePath: newImage})
+  this.setState({selectedImages: newSelectedImages})
+}
+
+RemoveSelectedImage(identifier: string, newImage: string){
+  let newSelectedImages = this.state.selectedImages.filter(item => item.identifier !== identifier);
   this.setState({selectedImages: newSelectedImages})
 }
 
@@ -83,7 +100,8 @@ ActivePageContent(currentState: string) {
   }
   else if (this.state.activePage === 'FileUpload') {
     var functionForImageUpdated = this.ImagesSelectedUpdate.bind(this)
-    return <FileUpload selectedImages={this.state.selectedImages} selectedImagesUpdateAction={functionForImageUpdated}></FileUpload> 
+    var functionForImageRemove = this.RemoveSelectedImage.bind(this)
+    return <FileUpload selectedImages={this.state.selectedImages} selectedImageRemove={functionForImageRemove} selectedImagesUpdateAction={functionForImageUpdated}></FileUpload> 
   }
   else if (this.state.activePage === 'SelectStyle') {
     return <SelectStyle selectedImages={this.state.selectedImages}></SelectStyle>
@@ -95,15 +113,19 @@ ActivePageContent(currentState: string) {
 
  render() {
     return(
-        <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonRow>
-          <IonButton onClick={() => this.Navigate(false)}> Back </IonButton>
-          <IonTitle> {this.state.activePage}</IonTitle>
-          </IonRow>
-        </IonToolbar>
-      </IonHeader>
+      <IonPage>
+        <IonHeader>
+          <IonToolbar>
+            <IonRow>
+              <IonButton onClick={() => this.Navigate(false)}>
+                <IonIcon className="backArrow" src={arrowBack}></IonIcon>
+              </IonButton>
+              <IonTitle> {this.state.activePage}</IonTitle>
+              <IonTitle> {this.state.selectedImages.length}</IonTitle>
+              <IonIcon src={cartOutline} className="cart"/>
+            </IonRow>
+          </IonToolbar>
+        </IonHeader>
       <IonContent>
         {
           this.ActivePageContent(this.state.activePage)

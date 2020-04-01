@@ -1,0 +1,28 @@
+.slider {
+  height: 80%; /* slider height you want */
+  width: max-content;
+  }
+  
+  .SliderCard {
+  height: 60%; /* slider height you want */
+  width: max-content;
+  }
+
+.importedImages { 
+    max-height: 50px;
+    max-width: 50px;
+    min-height: 50px;
+    min-width: 50px;
+}
+
+.removeIcon{
+  color: red;
+  height: 50px;
+  width: 50px;
+}
+
+.hasIcon{
+  background-color: transparent;
+  color: transparent;
+}
+
